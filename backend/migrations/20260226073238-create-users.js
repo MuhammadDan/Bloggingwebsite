@@ -32,6 +32,11 @@ module.exports = {
         defaultValue: 'user',
         allowNull: false
       },
+      isVerified: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

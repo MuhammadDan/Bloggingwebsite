@@ -1,4 +1,4 @@
-// src/models/User.js
+// src/models/User.model.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -26,7 +26,6 @@ module.exports = (sequelize) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      // note: hum password ko controller/service mein hash karenge (bcrypt)
     },
     imageUrl: {
       type: DataTypes.STRING,
@@ -35,15 +34,19 @@ module.exports = (sequelize) => {
         isUrl: true,
       },
     },
-    // optional fields jo tumhare screenshot mein nahi dikhe lekin useful hain
     role: {
       type: DataTypes.ENUM('user', 'admin'),
       defaultValue: 'user',
+    },
+      isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
     },
   }, {
     timestamps: true,
     tableName: 'users',
   });
 
-  return User;
+  return User; // ← yeh return bohot zaroori hai – agar yeh missing hai to sequelize.define crash karega
 };
