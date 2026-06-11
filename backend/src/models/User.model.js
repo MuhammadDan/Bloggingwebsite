@@ -43,6 +43,19 @@ module.exports = (sequelize) => {
       defaultValue: false,
       allowNull: false,
     },
+<<<<<<< HEAD
+=======
+    aiCredits: {
+  type: DataTypes.INTEGER,
+  defaultValue: 10,     // Free credits new users ko
+  allowNull: false
+},
+
+aiGeneratedPosts: {
+  type: DataTypes.INTEGER,
+  defaultValue: 0
+},
+>>>>>>> d686202 (Remove secrets and clean env files)
   }, {
     timestamps: true,
     tableName: 'users',
