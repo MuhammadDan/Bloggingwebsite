@@ -1,34 +1,14 @@
-<<<<<<< HEAD
-const { Article } = require('../models');
-
-class ArticleRepository {
-  static async findAllPublished() {
-    return Article.findAll({ 
-      where: { published: true },
-      include: [{ model: require('../models').User, as: 'author', attributes: ['name', 'imageUrl'] }]
-    });
-  }
-
-  static async create(articleData) {
-    return Article.create(articleData);
-  }
-
-  // aur baki methods...
-}
-
-module.exports = ArticleRepository;
-=======
 // src/repositories/article.repositories.js
-const { Article, User } = require('../models');
+const { Article, User } = require("../models");
 
 class ArticleRepository {
   async create(data, authorId) {
     const slug = data.title
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
     return await Article.create({ ...data, slug, authorId });
   }
@@ -36,7 +16,9 @@ class ArticleRepository {
   async findBySlug(slug) {
     return await Article.findOne({
       where: { slug },
-      include: [{ model: User, as: 'author', attributes: ['id', 'name', 'email'] }]
+      include: [
+        { model: User, as: "author", attributes: ["id", "name", "email"] },
+      ],
     });
   }
 
@@ -46,17 +28,21 @@ class ArticleRepository {
     if (category) where.category = category;
 
     return await Article.findAndCountAll({
-      where, limit, offset,
-      order: [['createdAt', 'DESC']],
-      include: [{ model: User, as: 'author', attributes: ['name'] }]
+      where,
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+      include: [{ model: User, as: "author", attributes: ["name"] }],
     });
   }
 
   async findMyArticles(authorId, { page = 1, limit = 10 } = {}) {
     const offset = (page - 1) * limit;
     return await Article.findAndCountAll({
-      where: { authorId }, limit, offset,
-      order: [['createdAt', 'DESC']]
+      where: { authorId },
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
     });
   }
 
@@ -74,23 +60,24 @@ class ArticleRepository {
   }
 
   async incrementViews(slug) {
-    return await Article.increment('views', { where: { slug, published: true } });
+    return await Article.increment("views", {
+      where: { slug, published: true },
+    });
   }
 
   // ✅ Like toggle
   async incrementLikes(id) {
-    await Article.increment('likesCount', { where: { id } });
+    await Article.increment("likesCount", { where: { id } });
     return await this.findById(id);
   }
 
   async decrementLikes(id) {
     const article = await this.findById(id);
     if (article && article.likesCount > 0) {
-      await Article.decrement('likesCount', { where: { id } });
+      await Article.decrement("likesCount", { where: { id } });
     }
     return await this.findById(id);
   }
 }
 
 module.exports = new ArticleRepository();
->>>>>>> d686202 (Remove secrets and clean env files)
