@@ -55,6 +55,11 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
+      plan: {
+        type: DataTypes.ENUM("none", "basic", "premium"),
+        defaultValue: "none",
+        allowNull: false,
+      },
     },
     {
       timestamps: true,

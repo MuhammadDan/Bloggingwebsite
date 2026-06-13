@@ -2,6 +2,10 @@
 const paymentController = require('../controllers/payment.controller');
 
 async function paymentRoutes(fastify) {
+
+  fastify.get('/api/user/plan', {
+    preHandler: [fastify.authenticate],
+  }, paymentController.getUserPlan);
   
   // Create Stripe Checkout Session
   fastify.post('/api/payment/create-session', {
