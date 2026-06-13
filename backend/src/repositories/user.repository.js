@@ -11,10 +11,19 @@ class UserRepository {
     return User.create(userData);
   }
 
-  // Optional: future mein aur methods add kar sakte ho
-  // static async findById(id) { ... }
-  // static async update(id, data) { ... }
-  // static async delete(id) { ... }
+ static async findById(id) {
+    return User.findByPk(id);
+  }
+
+  // ✅ Added
+  static async updatePlan(id, plan, credits) {
+    const user = await User.findByPk(id);
+    if (!user) throw new Error("User not found");
+    user.plan = plan;
+    user.aiCredits = credits;
+    await user.save();
+    return user;
+  }
 }
 
 module.exports = UserRepository;
