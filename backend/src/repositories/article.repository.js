@@ -50,10 +50,21 @@ class ArticleRepository {
     return await Article.findByPk(id);
   }
 
+  // async update(id, data) {
+  //   await Article.update(data, { where: { id } });
+  //   return await this.findById(id);
+  // }
+
   async update(id, data) {
-    await Article.update(data, { where: { id } });
-    return await this.findById(id);
-  }
+  const article = await this.findById(id);
+  if (!article) return null;
+  
+  // ✅ update() ki jagah set() + save() use karo — arrays properly save honge
+  await article.set(data);
+  await article.save();
+  
+  return await this.findById(id);
+}
 
   async delete(id) {
     return await Article.destroy({ where: { id } });

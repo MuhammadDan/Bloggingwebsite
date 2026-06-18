@@ -1,24 +1,29 @@
 // src/schemas/article.schema.js
 
+const tagsProperty = {
+  type: 'array',
+  items: { type: 'string' },
+  default: [],
+  nullable: true,
+};
+
 const articleSchemas = {
- createArticle: {
-  description: 'Create a new blog article',
-  tags: ['Articles'],
-  body: {
-    type: 'object',
-    properties: {
-      title: { type: 'string', minLength: 3, maxLength: 300 },
-      content: { type: 'string', minLength: 10 },
-      category: { type: 'string', nullable: true },
-      published: { type: 'boolean', default: false },
-      featuredImage: { 
-        type: 'string',
-        nullable: true 
-      }   // ← Yeh line important hai
+  createArticle: {
+    description: 'Create a new blog article',
+    tags: ['Articles'],
+    body: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', minLength: 3, maxLength: 300 },
+        content: { type: 'string', minLength: 10 },
+        category: { type: 'string', nullable: true },
+        published: { type: 'boolean', default: false },
+        featuredImage: { type: 'string', nullable: true },
+        tags: tagsProperty, // ✅ ADD
+      },
+      required: ['title', 'content'],
+      additionalProperties: false,
     },
-    required: ['title', 'content'],
-    additionalProperties: false
-  },
     response: {
       201: {
         type: 'object',
@@ -29,33 +34,31 @@ const articleSchemas = {
           content: { type: 'string' },
           category: { type: ['string', 'null'] },
           featuredImage: { type: ['string', 'null'] },
+          tags: tagsProperty, // ✅ ADD
           authorId: { type: 'string', format: 'uuid' },
           likesCount: { type: 'integer' },
           views: { type: 'integer' },
           published: { type: 'boolean' },
           createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' }
-        }
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
       },
       400: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
-      }
-    }
+        properties: { error: { type: 'string' } },
+      },
+    },
   },
 
   updateArticle: {
     description: 'Update an existing article',
     tags: ['Articles'],
-    consumes: ['multipart/form-data'],
     params: {
       type: 'object',
       properties: {
-        id: { type: 'string', format: 'uuid' }
+        id: { type: 'string', format: 'uuid' },
       },
-      required: ['id']
+      required: ['id'],
     },
     body: {
       type: 'object',
@@ -63,9 +66,11 @@ const articleSchemas = {
         title: { type: 'string', minLength: 3, maxLength: 300 },
         content: { type: 'string', minLength: 10 },
         category: { type: 'string', nullable: true },
-        published: { type: 'boolean' }
+        published: { type: 'boolean' },
+        featuredImage: { type: 'string', nullable: true },
+        tags: tagsProperty, // ✅ ADD
       },
-      additionalProperties: false
+      additionalProperties: false,
     },
     response: {
       200: {
@@ -74,22 +79,26 @@ const articleSchemas = {
           id: { type: 'string', format: 'uuid' },
           title: { type: 'string' },
           slug: { type: 'string' },
-          featuredImage: { type: ['string', 'null'] }
-        }
+          content: { type: 'string' },
+          category: { type: ['string', 'null'] },
+          featuredImage: { type: ['string', 'null'] },
+          tags: tagsProperty, // ✅ ADD
+          likesCount: { type: 'integer' },
+          views: { type: 'integer' },
+          published: { type: 'boolean' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
       },
       400: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
+        properties: { error: { type: 'string' } },
       },
       403: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
-      }
-    }
+        properties: { error: { type: 'string' } },
+      },
+    },
   },
 
   getAllArticles: {
@@ -100,8 +109,8 @@ const articleSchemas = {
       properties: {
         page: { type: 'integer', minimum: 1, default: 1 },
         limit: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
-        category: { type: 'string' }
-      }
+        category: { type: 'string' },
+      },
     },
     response: {
       200: {
@@ -118,22 +127,21 @@ const articleSchemas = {
                 slug: { type: 'string' },
                 category: { type: ['string', 'null'] },
                 featuredImage: { type: ['string', 'null'] },
+                tags: tagsProperty,
                 likesCount: { type: 'integer' },
                 views: { type: 'integer' },
                 published: { type: 'boolean' },
                 createdAt: { type: 'string', format: 'date-time' },
                 author: {
                   type: 'object',
-                  properties: {
-                    name: { type: 'string' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  properties: { name: { type: 'string' } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 
   getArticleBySlug: {
@@ -141,10 +149,8 @@ const articleSchemas = {
     tags: ['Articles'],
     params: {
       type: 'object',
-      properties: {
-        slug: { type: 'string' }
-      },
-      required: ['slug']
+      properties: { slug: { type: 'string' } },
+      required: ['slug'],
     },
     response: {
       200: {
@@ -156,6 +162,7 @@ const articleSchemas = {
           content: { type: 'string' },
           category: { type: ['string', 'null'] },
           featuredImage: { type: ['string', 'null'] },
+          tags: tagsProperty,
           likesCount: { type: 'integer' },
           views: { type: 'integer' },
           published: { type: 'boolean' },
@@ -165,39 +172,37 @@ const articleSchemas = {
             properties: {
               id: { type: 'string' },
               name: { type: 'string' },
-              email: { type: 'string' }
-            }
-          }
-        }
+              email: { type: 'string' },
+            },
+          },
+        },
       },
       404: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
-      }
-    }
+        properties: { error: { type: 'string' } },
+      },
+    },
   },
 
   getMyArticles: {
-    description: 'Get logged in user\'s all articles',
+    description: "Get logged in user's all articles",
     tags: ['Articles'],
     querystring: {
       type: 'object',
       properties: {
         page: { type: 'integer', minimum: 1, default: 1 },
-        limit: { type: 'integer', minimum: 1, maximum: 50, default: 10 }
-      }
+        limit: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+      },
     },
     response: {
       200: {
         type: 'object',
         properties: {
           count: { type: 'integer' },
-          rows: { type: 'array', items: { type: 'object' } }
-        }
-      }
-    }
+          rows: { type: 'array', items: { type: 'object' } },
+        },
+      },
+    },
   },
 
   deleteArticle: {
@@ -205,27 +210,21 @@ const articleSchemas = {
     tags: ['Articles'],
     params: {
       type: 'object',
-      properties: {
-        id: { type: 'string', format: 'uuid' }
-      },
-      required: ['id']
+      properties: { id: { type: 'string', format: 'uuid' } },
+      required: ['id'],
     },
     response: {
       204: { type: 'null' },
       403: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
+        properties: { error: { type: 'string' } },
       },
       404: {
         type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
-      }
-    }
-  }
+        properties: { error: { type: 'string' } },
+      },
+    },
+  },
 };
 
 module.exports = articleSchemas;

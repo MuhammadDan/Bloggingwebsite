@@ -16,15 +16,33 @@ const uploadImage = async (request, reply) => {
 const createArticle = async (request, reply) => {
   try {
     if (!request.user || !request.user.id) {
-      return reply.code(401).send({ error: "Authentication failed. Please login again." });
+      return reply.code(401).send({ error: 'Authentication failed. Please login again.' });
     }
+
+    const rawTags = request.body.tags;
+    let tags = [];
+
+    if (Array.isArray(rawTags)) {
+      tags = rawTags.filter(Boolean);
+    } else if (typeof rawTags === 'string' && rawTags.trim()) {
+      tags = [rawTags.trim()];
+    }
+
+    // ✅ Category automatically tag bane
+    const category = request.body.category || null;
+    if (category && !tags.includes(category)) {
+      tags = [category, ...tags];
+    }
+
     const articleData = {
       title: request.body.title,
       content: request.body.content,
-      category: request.body.category || null,
+      category,
       published: request.body.published || false,
-      featuredImage: request.body.featuredImage || null
+      featuredImage: request.body.featuredImage || null,
+      tags,
     };
+
     const article = await articleService.createArticle(articleData, request.user.id);
     reply.code(201).send(article);
   } catch (error) {
@@ -61,6 +79,23 @@ const getArticleBySlug = async (request, reply) => {
   }
 };
 
+// ✅ ID se fetch — edit page ke liye
+const getArticleById = async (request, reply) => {
+  try {
+    const article = await articleRepo.findById(request.params.id);
+    if (!article) return reply.code(404).send({ error: 'Article not found' });
+ 
+    // Sirf apna article edit kar sake
+    if (article.authorId !== request.user.id) {
+      return reply.code(403).send({ error: 'Not authorized' });
+    }
+ 
+    reply.send(article);
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+  }
+};
+
 const getMyArticles = async (request, reply) => {
   try {
     const query = {
@@ -76,19 +111,34 @@ const getMyArticles = async (request, reply) => {
 
 const updateArticle = async (request, reply) => {
   try {
-    let featuredImageUrl = undefined;
-    if (request.file) {
-      const uploadResult = await uploadToCloudinary(request.file, 'blog-featured');
-      featuredImageUrl = uploadResult.url;
+    const rawTags = request.body.tags;
+    let tags = undefined;
+    if (rawTags !== undefined) {
+      if (Array.isArray(rawTags)) tags = rawTags.filter(Boolean);
+      else if (typeof rawTags === 'string' && rawTags.trim()) tags = [rawTags.trim()];
+      else tags = [];
     }
-    const articleData = {
+
+    const payload = {
       title: request.body.title,
       content: request.body.content,
       category: request.body.category || null,
-      featuredImage: featuredImageUrl,
       published: request.body.published === 'true' || request.body.published === true,
+      ...(tags !== undefined && { tags }),
     };
-    const article = await articleService.updateArticle(request.params.id, articleData, request.user.id);
+ console.log('PAYLOAD BEING SENT:', JSON.stringify(payload));
+    if (request.file && request.file.buffer) {
+      const uploadResult = await uploadToCloudinary(request.file, 'blog-featured');
+      payload.featuredImage = uploadResult.url;
+    } else if (request.body.featuredImage) {
+      payload.featuredImage = request.body.featuredImage;
+    }
+
+    const article = await articleService.updateArticle(
+      request.params.id,
+      payload,
+      request.user.id
+    );
     reply.send(article);
   } catch (error) {
     if (error.message.includes('authorized') || error.message.includes('not found')) {
@@ -139,6 +189,7 @@ module.exports = {
   createArticle,
   getPublishedArticles,
   getArticleBySlug,
+  getArticleById,
   getMyArticles,
   updateArticle,
   deleteArticle,

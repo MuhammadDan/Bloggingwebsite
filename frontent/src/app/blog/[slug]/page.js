@@ -322,7 +322,7 @@ export default function BlogDetailPage() {
                   className="comment-textarea"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder={token ? "Apna comment likhein..." : "Comment karne ke liye login karein"}
+                  placeholder={token ? "Comment" : "Comment karne ke liye login karein"}
                   disabled={!token}
                   rows={3}
                 />
@@ -349,7 +349,7 @@ export default function BlogDetailPage() {
               {/* Comments List */}
               {comments.length === 0 ? (
                 <p style={{ color: "#9ca3af", fontSize: "14px", textAlign: "center", padding: "32px 0" }}>
-                  Abhi koi comment nahi. Pehle comment karein! 🙌
+                  No comments right now. Comment first!
                 </p>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
