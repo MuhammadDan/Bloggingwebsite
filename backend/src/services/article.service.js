@@ -22,6 +22,7 @@ class ArticleService {
   }
 
   async updateArticle(id, data, authorId) {
+     console.log('SERVICE RECEIVED:', JSON.stringify(data));
     const article = await articleRepository.findById(id);
     if (!article || article.authorId !== authorId) {
       throw new Error('Article not found or you are not authorized');

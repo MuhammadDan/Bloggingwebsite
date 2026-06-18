@@ -55,6 +55,11 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    tags: {
+      type: DataTypes.ARRAY(DataTypes.STRING),     // PostgreSQL ke liye best
+      defaultValue: [],
+      allowNull: true,
+    },
   }, {
     timestamps: true,                 // createdAt aur updatedAt auto ban jayenge
     tableName: 'articles',

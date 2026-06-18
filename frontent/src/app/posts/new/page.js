@@ -1,3 +1,4 @@
+// src/app/post/new/page.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -53,7 +54,7 @@ export default function NewPostPage() {
 
       if (res.data.success) {
         setContent(res.data.data.content);
-        alert("✅ AI ne blog successfully likh diya!");
+        alert("AI has successfully written the blog post!");
       }
     } catch (error) {
       alert(error.response?.data?.message || "AI generation failed");
@@ -75,7 +76,7 @@ export default function NewPostPage() {
         window.location.href = res.data.url;
       }
     } catch (error) {
-      alert("Payment page nahi khul saka");
+      alert("The payment page could not be opened");
     }
   };
 
@@ -94,7 +95,7 @@ export default function NewPostPage() {
             disabled={aiLoading || !title.trim()}
             className="px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:brightness-105 disabled:opacity-50 flex items-center gap-2"
           >
-            {aiLoading ? "🤖 Generating..." : "✨ Generate with AI"}
+            {aiLoading ? " Generating..." : " Generate with AI"}
           </button>
 
           <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
