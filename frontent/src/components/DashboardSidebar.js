@@ -1,26 +1,30 @@
-// src/components/DashboardSidebar.js
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
 
-export default function DashboardSidebar({ user, isOpen, onClose }) {
+export default function DashboardSidebar({ user, isOpen, onClose, isAdmin }) {
   const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    router.push('/auth');
+    router.push('/');
   };
 
-  const navItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
-    { label: 'Blog Posts', href: '/dashboard/articles', icon: '📖' },
-    { label: 'Comments', href: '/dashboard/comments', icon: '💬' },
-  ];
+  const navItems = isAdmin
+    ? [
+        { label: 'Dashboard', href: '/admin/dashboard', icon: '⊞' },
+        { label: 'Blog Posts', href: '/admin/dashboard', icon: '📖' },
+        { label: 'Comments', href: '/admin/dashboard', icon: '💬' },
+      ]
+    : [
+        { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
+        { label: 'Blog Posts', href: '/dashboard/articles', icon: '📖' },
+        { label: 'Comments', href: '/dashboard/comments', icon: '💬' },
+      ];
 
   return (
     <>
-      {/* Backdrop — mobile only, shown when drawer is open */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -34,7 +38,6 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
-        {/* Close button — mobile only */}
         <button
           onClick={onClose}
           className="lg:hidden absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -45,7 +48,6 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           </svg>
         </button>
 
-        {/* Profile */}
         <div className="flex flex-col items-center px-5 pt-7 pb-5 border-b border-slate-100">
           {user?.imageUrl ? (
             <img
@@ -62,7 +64,6 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           <p className="text-xs text-gray-400 mt-0.5 text-center break-all">{user?.email}</p>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map(({ label, href }) => {
             const isActive = pathname === href;
@@ -83,7 +84,6 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           })}
         </nav>
 
-        {/* Logout */}
         <div className="p-3 border-t border-slate-100">
           <button
             onClick={handleLogout}

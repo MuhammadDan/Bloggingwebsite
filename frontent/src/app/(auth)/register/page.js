@@ -1,3 +1,4 @@
+// src/app/(auth)/register/page.js
 "use client";
 
 import { useState, useRef } from "react";
@@ -69,7 +70,6 @@ export default function RegisterPage() {
     }
   };
 
-  // ─── Cloudinary Upload ───────────────────────────────────────────────────────
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -83,7 +83,7 @@ export default function RegisterPage() {
 
     if (!res.ok) throw new Error("Image upload failed");
     const data = await res.json();
-    return data.secure_url; // ✅ Cloudinary URL return hoga
+    return data.secure_url;
   };
 
   const onSubmit = async (data) => {
@@ -91,7 +91,6 @@ export default function RegisterPage() {
     try {
       let imageUrl = null;
 
-      // Agar image select ki hai toh pehle Cloudinary pe upload karo
       if (avatarFile) {
         setImageUploading(true);
         imageUrl = await uploadToCloudinary(avatarFile);
@@ -100,7 +99,7 @@ export default function RegisterPage() {
 
       const response = await axios.post(
         "http://localhost:4000/api/auth/register",
-        { ...data, imageUrl }  // ✅ imageUrl backend ko bhejo
+        { ...data, imageUrl }
       );
 
       showToast(response.data.message || "Account created!", "success");
@@ -123,21 +122,18 @@ export default function RegisterPage() {
 
   return (
     <div style={styles.page}>
-      {/* Toast Notification */}
       <Toast
         message={toast.message}
         type={toast.type}
         onClose={() => setToast({ message: "", type: "" })}
       />
 
-      {/* Main card */}
-      <div style={styles.card}>
+      <div className="signup-card" style={styles.card}>
         {/* Left: Form */}
-        <div style={styles.formSection}>
+        <div className="signup-form-section" style={styles.formSection}>
           <h2 style={styles.title}>Create an Account</h2>
           <p style={styles.subtitle}>Join us today by entering your details below.</p>
 
-          {/* Avatar Upload */}
           <div style={styles.avatarWrapper}>
             <div style={styles.avatarCircle} onClick={handleAvatarClick}>
               {avatarPreview ? (
@@ -169,8 +165,7 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
-            {/* Row 1 */}
-            <div style={styles.row}>
+            <div className="signup-row" style={styles.row}>
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Full Name</label>
                 <input
@@ -197,8 +192,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Row 2 */}
-            <div style={styles.row}>
+            <div className="signup-row" style={styles.row}>
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Password</label>
                 <div style={styles.inputWrapper}>
@@ -244,7 +238,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               style={{
@@ -285,13 +278,31 @@ export default function RegisterPage() {
         </div>
 
         {/* Right: Image panel */}
-        <div style={styles.imageSection}>
+        <div className="signup-image-section" style={styles.imageSection}>
           <img src="/Signup.png" alt="Signup Visual" style={styles.sideImage} />
         </div>
       </div>
 
-      {/* Spinner keyframe */}
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+          .signup-card {
+            flex-direction: column !important;
+            max-width: 420px !important;
+            min-height: auto !important;
+          }
+          .signup-form-section {
+            padding: 36px 24px 28px !important;
+          }
+          .signup-image-section {
+            display: none !important;
+          }
+          .signup-row {
+            flex-direction: column !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

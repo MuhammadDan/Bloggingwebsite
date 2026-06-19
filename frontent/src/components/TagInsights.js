@@ -1,3 +1,4 @@
+// src/components/Tagsinsight.js
 'use client';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 

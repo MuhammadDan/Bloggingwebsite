@@ -1,3 +1,4 @@
+// src/components/TopPosts.js
 const GRADIENTS = [
   'from-purple-400 to-pink-500',
   'from-blue-400 to-cyan-500',

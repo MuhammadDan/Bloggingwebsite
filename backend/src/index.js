@@ -89,6 +89,10 @@ fastify.register(require("./routes/payment.route"), { prefix: "" });
 // userdashbaord routes
 fastify.register(require("./routes/userdashboard.route"), {prefix:"/user"});
 
+// admin dashboard routes
+const adminRoutes = require('./routes/admin.routes');
+fastify.register(adminRoutes, { prefix: '/api' });
+
 // ====================== START SERVER ======================
 const start = async () => {
   try {

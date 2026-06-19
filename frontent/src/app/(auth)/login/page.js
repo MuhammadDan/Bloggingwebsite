@@ -1,3 +1,4 @@
+// src/app/(auth)/login/page.js
 "use client";
 
 import { useState } from "react";
@@ -65,13 +66,11 @@ export default function LoginPage() {
 
       showToast(response.data.message || "Login successful!", "success");
 
-      // Token aur user save karo
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      // Role ke hisaab se redirect
       if (response.data.user.role === "admin") {
-        window.location.href = "/dashboard";
+        window.location.href = "/admin/dashboard";
       } else {
         window.location.href = "/";
       }
@@ -87,24 +86,21 @@ export default function LoginPage() {
 
   return (
     <div style={styles.page}>
-      {/* Toast */}
       <Toast
         message={toast.message}
         type={toast.type}
         onClose={() => setToast({ message: "", type: "" })}
       />
 
-      {/* Main Card */}
-      <div style={styles.card}>
+      <div className="login-card" style={styles.card}>
 
         {/* Left: Form */}
-        <div style={styles.formSection}>
+        <div className="login-form-section" style={styles.formSection}>
           <h2 style={styles.title}>Welcome Back</h2>
           <p style={styles.subtitle}>Please enter your details to log in</p>
 
           <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
 
-            {/* Email */}
             <div style={styles.fieldGroup}>
               <label style={styles.label}>Email Address</label>
               <input
@@ -118,7 +114,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Password */}
             <div style={styles.fieldGroup}>
               <label style={styles.label}>Password</label>
               <div style={styles.inputWrapper}>
@@ -153,7 +148,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               style={{
@@ -186,13 +180,29 @@ export default function LoginPage() {
         </div>
 
         {/* Right: Image */}
-        <div style={styles.imageSection}>
+        <div className="login-image-section" style={styles.imageSection}>
           <img src="/login.png" alt="Login Visual" style={styles.sideImage} />
         </div>
       </div>
 
-      {/* Spinner keyframe */}
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+          .login-card {
+            flex-direction: column !important;
+            max-width: 420px !important;
+            min-height: auto !important;
+          }
+          .login-form-section {
+            width: 100% !important;
+            padding: 40px 28px !important;
+          }
+          .login-image-section {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
