@@ -1,49 +1,71 @@
-// src/models/User.js
-const { DataTypes } = require('sequelize');
+// src/models/User.model.js
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [2, 100],
+  const User = sequelize.define(
+    "User",
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
       },
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: [2, 100],
+        },
       },
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      // note: hum password ko controller/service mein hash karenge (bcrypt)
-    },
-    imageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        isUrl: true,
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
       },
-    },
-    // optional fields jo tumhare screenshot mein nahi dikhe lekin useful hain
-    role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user',
-    },
-  }, {
-    timestamps: true,
-    tableName: 'users',
-  });
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          isUrl: true,
+        },
+      },
+      role: {
+        type: DataTypes.ENUM("user", "admin"),
+        defaultValue: "user",
+      },
+      isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      aiCredits: {
+        type: DataTypes.INTEGER,
+        defaultValue: 10, // Free credits new users ko
+        allowNull: false,
+      },
 
-  return User;
+      aiGeneratedPosts: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      plan: {
+        type: DataTypes.ENUM("none", "basic", "premium"),
+        defaultValue: "none",
+        allowNull: false,
+      },
+    },
+    {
+      timestamps: true,
+      tableName: "users",
+    },
+  );
+
+  return User; // ← yeh return bohot zaroori hai – agar yeh missing hai to sequelize.define crash karega
 };

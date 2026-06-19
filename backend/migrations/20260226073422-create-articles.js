@@ -1,3 +1,4 @@
+//20260226073422-create-articles.js
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */

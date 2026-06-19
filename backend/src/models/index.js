@@ -1,11 +1,11 @@
 // src/models/index.js
 const { Sequelize } = require('sequelize');
-const sequelize = require('../config/database'); // tumhara sequelize instance
+const { sequelize } = require('../../config/database'); // tumhara sequelize instance
 
 // Models define
-const defineUser = require('./User');
-const defineArticle = require('./Article');
-const defineComment = require('./Comment');
+const defineUser = require('./User.model');
+const defineArticle = require('./Article.model');
+const defineComment = require('./Comment.model');
 
 const User = defineUser(sequelize);
 const Article = defineArticle(sequelize);

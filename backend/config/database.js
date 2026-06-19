@@ -1,4 +1,4 @@
-// src/config/database.js (ya src/db.js)
+// src/db.js
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
@@ -7,15 +7,26 @@ const sequelize = new Sequelize(
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   {
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'postgres',
     logging: false,
-    pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
   }
 );
 
-// Optional: models ko yahan load kar sakte ho (lekin index.js better hai)
-const models = require('../src/models');
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('PostgreSQL connected via Sequelize! 🔥');
+  } catch (error) {
+    console.error('Connection failed:', error.message);
+    process.exit(1);
+  }
+};
 
-module.exports = sequelize;
-module.exports.models = models; // agar chahte ho direct access
+module.exports = { sequelize, connectDB };
